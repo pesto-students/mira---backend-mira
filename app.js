@@ -1,36 +1,27 @@
 const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv/config");
-
 const morgan = require("morgan");
+
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
+
+const authRoute = require("./routes/authRoutes");
 
 const app = express();
 const cors = require("cors");
-
 app.use(cors({ origin: true }));
-app.use(morgan("dev"));
+
+// 1) Middlewares
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello there");
+app.use("/api/v1/auth", authRoute);
+
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl}`, 404));
 });
 
-// User authentication route
-const userRoute = require("./router/user");
+app.use(globalErrorHandler);
 
-app.use("/api/v1/users/", userRoute);
-
-mongoose
-  .connect(process.env.DB_STRING, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("DB connection successful");
-  })
-  .catch(() => {
-    console.log("DB connection failed");
-  });
-
-app.listen(4000, () => {
-  console.log("Listening to port 4000");
-});
+module.exports = app;
