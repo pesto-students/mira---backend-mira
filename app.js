@@ -4,11 +4,13 @@ const morgan = require("morgan");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
+const authMiddleware = require("./middlewares/authMiddleware");
 const authRoute = require("./routes/authRoutes");
 
 const app = express();
 const cors = require("cors");
 app.use(cors({ origin: true }));
+app.use(authMiddleware);
 
 // 1) Middlewares
 if (process.env.NODE_ENV === "development") {
