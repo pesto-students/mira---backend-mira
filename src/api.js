@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const serverless = require("serverless-http");
 
-dotenv.config({ path: "./config.env" });
+require("dotenv").config();
 
 const app = require("./app");
 
