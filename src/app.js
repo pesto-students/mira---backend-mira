@@ -16,20 +16,23 @@ const cors = require("cors");
 app.use(cors({ origin: true }));
 app.use(express.json());
 
+let base_url;
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
+  base_url = "";
+} else {
+  base_url = "/.netlify/functions";
+}
 
-  app.use("/api/v1/users", userRoute);
-  app.use("/api/v1/auth", authMiddleware, authRoute);
+app.use(`${base_url}/api/v1/users`, userRoute);
+app.use(`${base_url}/api/v1/auth`, authRoute);
 
+// TODO: Improve the code to catch unhandled paths in netlify functions.
+if (process.env.NODE_ENV === "development") {
   app.all("*", (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl}`, 404));
   });
   app.use(globalErrorHandler);
-} else {
-  const base_url = "/.netlify/functions";
-  app.use(`${base_url}/api/v1/users`, userRoute);
-  app.use(`${base_url}/api/v1/auth`, authMiddleware, authRoute);
 }
 
 module.exports = app;

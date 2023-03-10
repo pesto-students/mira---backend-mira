@@ -1,19 +1,34 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/users");
+const firebaseAdmin = require("../config/firebase.config");
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const { firebaseUser, body } = req;
-  const newUser = await User.create({
-    name: body.name || firebaseUser.name,
-    email: firebaseUser.email,
-    imageUrl: body.imageUrl || firebaseUser.picture,
-    firebaseId: firebaseUser.user_id,
-    email_verified: firebaseUser.email_verified,
-    auth_time: firebaseUser.auth_time,
-  });
+  const { body } = req;
+  // Create temp user to validate with the model before creating the account.
+  const temp_user = {
+    name: body.name,
+    email: body.email,
+    password: body.password,
+    firebaseId: "tempString",
+    authTime: 0,
+    imageUrl: "tempUrl",
+    emailVerified: false,
+  };
+  // Validate fields with the user model
+  await User.validate(temp_user);
 
-  res.status(201).json({
+  // Firebase create user
+  const firebaseUser = await firebaseAdmin.auth().createUser(temp_user);
+
+  // Populate temp user object with userid and other responses from firebase.
+  temp_user.firebaseId = firebaseUser.uid;
+  temp_user.emailVerified = firebaseUser.emailVerified;
+
+  // Create new user
+  const newUser = await User.create(temp_user);
+
+  return res.status(201).json({
     status: "success",
     data: {
       user: newUser,
@@ -21,12 +36,12 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 });
 
+// Just for development purpose.
 exports.signin = catchAsync(async (req, res, next) => {
-  const { firebaseUser } = req;
-  const user = await User.findOne({ firebaseId: firebaseUser.user_id });
-  if (!user) {
-    return new AppError("User belonging to the token doesn't not exist!", 401);
-  }
+  const user = await User.findOneAndUpdate(
+    { firebaseId: req.firebaseUser.user_id },
+    { authTime: req.firebaseUser.auth_time }
+  );
   return res.status(201).json({
     status: "success",
     data: {
