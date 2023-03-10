@@ -1,8 +1,10 @@
 const catchAsync = require("../utils/catchAsync");
 const firebaseAdmin = require("../config/firebase.config");
-const User = require("../models/users");
+const User = require("../models/userModel");
+const AppError = require("../utils/appError");
 
 const firebaseAuthorize = catchAsync(async (req, res, next) => {
+  let firebaseToken = null;
   //  1) Get token and check if it exists
   if (
     req.headers.authorization &&

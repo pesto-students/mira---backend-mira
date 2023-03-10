@@ -1,13 +1,15 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-const User = require("../models/users");
+const User = require("../models/userModel");
 const firebaseAdmin = require("../config/firebase.config");
 
 exports.signup = catchAsync(async (req, res, next) => {
   const { body } = req;
   // Create temp user to validate with the model before creating the account.
   const temp_user = {
-    name: body.name,
+    firstName: body.firstName,
+    lastName: body.lastName,
+    dob: body.dob,
     email: body.email,
     password: body.password,
     firebaseId: "tempString",
@@ -40,7 +42,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.signin = catchAsync(async (req, res, next) => {
   const user = await User.findOneAndUpdate(
     { firebaseId: req.firebaseUser.user_id },
-    { authTime: req.firebaseUser.auth_time }
+    { authTime: req.firebaseUser.auth_time },
+    {
+      new: true,
+      runValidators: true,
+    }
   );
   return res.status(201).json({
     status: "success",

@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const userController = require("../controllers/authController");
-// Import middleware
 const authMiddleware = require("../middlewares/authMiddleware");
 
 router.route("/signup").post(userController.signup);
