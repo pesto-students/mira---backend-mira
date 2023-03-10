@@ -1,5 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -13,8 +18,6 @@ const authMiddleware = require("./middlewares/authMiddleware");
 
 const app = express();
 const cors = require("cors");
-app.use(cors({ origin: true }));
-app.use(express.json());
 
 let base_url;
 if (process.env.NODE_ENV === "development") {
@@ -24,6 +27,36 @@ if (process.env.NODE_ENV === "development") {
   base_url = "/.netlify/functions";
 }
 
+const limiter = rateLimit({
+  max: 100, // Limit to 100 request per IP per hour.
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests from this IP, please try again in 1hr.",
+});
+
+// 1. Global middlewares.
+
+// Set security http headers
+app.use(helmet());
+
+// Limit requests from same IP.
+app.use(`${base_url}/api`, limiter);
+
+// Body parser, reading data from body into req.body.
+app.use(express.json({ limit: "10kb" }));
+
+// Data sanitization against NoSQL query injection.
+app.use(mongoSanitize());
+
+// Data sanitization against XSS.
+app.use(xss());
+
+// Precent parameter pollution
+app.use(hpp());
+
+app.use(cors({ origin: true }));
+
+// 2.Routes
+
 app.use(`${base_url}/api/v1/users`, userRoute);
 app.use(`${base_url}/api/v1/auth`, authRoute);
 
@@ -32,7 +65,8 @@ if (process.env.NODE_ENV === "development") {
   app.all("*", (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl}`, 404));
   });
-  app.use(globalErrorHandler);
 }
+
+app.use(globalErrorHandler);
 
 module.exports = app;
