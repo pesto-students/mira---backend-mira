@@ -16,7 +16,11 @@
     "elo-rating": "^1.0.1",
     "encoding": "^0.1.13",
     "express": "^4.17.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "5.1.1",
     "firebase-admin": "10.0.0",
+    "helmet": "5.0.1",
+    "hpp": "^0.2.3",
     "mongodb": "4.8.1",
     "mongodb-client-encryption": "^2.1.0",
     "mongoose": "6.5.0",
@@ -24,6 +28,7 @@
     "netlify-lambda": "^2.0.15",
     "nodemon": "^2.0.15",
     "serverless-http": "^3.0.1",
-    "uniqid": "^5.4.0"
+    "uniqid": "^5.4.0",
+    "xss-clean": "^0.1.1"
   }
 }
