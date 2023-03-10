@@ -66,6 +66,7 @@ if (process.env.NODE_ENV === "development") {
     next(new AppError(`Can't find ${req.originalUrl}`, 404));
   });
 }
+
 app.use(globalErrorHandler);
 
 module.exports = app;
