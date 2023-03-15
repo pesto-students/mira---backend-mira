@@ -12,9 +12,10 @@ const globalErrorHandler = require("./controllers/errorController");
 // Import routes
 const authRoute = require("./routes/authRoutes");
 const userRoute = require("./routes/userRoutes");
+const projectRoute = require("./routes/projectRoutes");
 
 // Import middleware
-const authMiddleware = require("./middlewares/authMiddleware");
+const restrictToLoggedInUser = require("./middlewares/authMiddleware");
 
 const app = express();
 const cors = require("cors");
@@ -57,7 +58,8 @@ app.use(cors({ origin: true }));
 
 // 2.Routes
 
-app.use(`${base_url}/api/v1/users`, userRoute);
+app.use(`${base_url}/api/v1/users`, restrictToLoggedInUser, userRoute);
+app.use(`${base_url}/api/v1/projects`, restrictToLoggedInUser, projectRoute);
 app.use(`${base_url}/api/v1/auth`, authRoute);
 
 // TODO: Improve the code to catch unhandled paths in netlify functions.

@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const userController = require("../controllers/authController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const restrictToLoggedInUser = require("../middlewares/authMiddleware");
 
 router.route("/signup").post(userController.signup);
-router.use(authMiddleware).route("/signin").post(userController.signin);
+router.use(restrictToLoggedInUser).route("/signin").post(userController.signin);
 
 module.exports = router;

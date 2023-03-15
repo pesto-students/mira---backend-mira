@@ -18,19 +18,13 @@ const handleValidationErrorDB = (err) => {
 };
 
 const handleJWTError = () =>
-  new AppError("Invalid token, please login again", 401);
+  new AppError("Invalid token, please login again.", 401);
 
 const handleJWTExpiredError = () =>
-  new AppError("Your token has expired, please login again", 401);
+  new AppError("Your token has expired, please login again.", 401);
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-    error: err,
-    stack: err.stack,
-  });
-};
+const handleFirebaseAuthUserAlreadyExists = () =>
+  new AppError("The email address is already in use by another account.", 400);
 
 const sendErrorProd = (err, res) => {
   // Operational, trusted error: send message to the client
@@ -55,25 +49,33 @@ const sendErrorProd = (err, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
-  if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === "production") {
-    let error = { ...err };
-    if (error.name === "CastError") {
-      error = handleCastErrorDB(error);
-    }
-    if (error.code === 11000) {
-      error = handleDuplicateFieldsErrorDB(error);
-    }
-    if (error.name === "ValidationError") {
-      error = handleValidationErrorDB(error);
-    }
-    if (error.name === "JsonWebTokenError") {
-      error = handleJWTError();
-    }
-    if (error.name === "TokenExpiredError") {
-      error = handleJWTExpiredError();
-    }
-    sendErrorProd(error, res);
+
+  let error = { ...err, message: err.message };
+  if (error.name === "CastError") {
+    error = handleCastErrorDB(error);
   }
+  if (error.code === 11000) {
+    error = handleDuplicateFieldsErrorDB(error);
+  }
+  if (error.name === "ValidationError") {
+    error = handleValidationErrorDB(error);
+  }
+  if (error.name === "TokenExpiredError") {
+    error = handleJWTExpiredError();
+  }
+  if (error.codePrefix == "auth") {
+    const { code } = error.errorInfo;
+    switch (code) {
+      case "auth/argument-error":
+        error = handleJWTError();
+        break;
+      case "auth/email-already-exists":
+        error = handleFirebaseAuthUserAlreadyExists();
+        break;
+      case "auth/id-token-expired":
+        error = handleJWTExpiredError();
+        break;
+    }
+  }
+  sendErrorProd(error, res);
 };

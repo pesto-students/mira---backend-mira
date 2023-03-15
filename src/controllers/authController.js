@@ -1,4 +1,3 @@
-const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel");
 const firebaseAdmin = require("../config/firebase.config");
