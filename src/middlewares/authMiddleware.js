@@ -26,7 +26,9 @@ const firebaseAuthorize = catchAsync(async (req, res, next) => {
   req.firebaseUser = firebaseUser;
 
   //  3) Get user from mongodb
-  const user = await User.findOne({ firebaseId: firebaseUser.user_id });
+  const user = await User.findOne({ firebaseId: firebaseUser.user_id }).select(
+    "+role +active +firebaseId +emailVerified +authTime +createdAt +updatedAt"
+  );
   if (!user) {
     return new AppError("User belonging to the token doesn't not exist!", 401);
   }
