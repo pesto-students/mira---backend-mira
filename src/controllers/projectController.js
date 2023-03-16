@@ -8,7 +8,7 @@ exports.setCurrentUserAsAdmin = (req, res, next) => {
   next();
 };
 
-exports.setProjectUserRole = catchAsync(async (req, res, next) => {
+exports.getProjectUserRole = catchAsync(async (req, res, next) => {
   const project = await Project.findById(req.params.id || req.params.projectId);
   req.isProjectAdmin = project && project.admins.includes(req.user.id);
   req.isProjectUser = project && project.users.includes(req.user.id);
@@ -26,7 +26,7 @@ exports.restrictTo = (role) => {
       (role == "projectAdmin" && !req.isProjectAdmin) ||
       (role == "projectUser" && !req.isProjectUser)
     ) {
-      return next(new AppError("Access denied", 403));
+      return next(new AppError("You don't have access to this project.", 403));
     }
 
     next();
@@ -34,11 +34,7 @@ exports.restrictTo = (role) => {
 };
 
 exports.getAllProjects = factory.getAll(Project);
-exports.getProject = factory.getOne(
-  Project,
-  { path: "admins" },
-  { path: "users" }
-);
+exports.getProject = factory.getOne(Project, { path: "users" });
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);

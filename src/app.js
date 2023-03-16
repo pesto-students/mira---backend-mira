@@ -10,6 +10,7 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
 // Import routes
+const mailRoute = require("./routes/mailRoutes");
 const authRoute = require("./routes/authRoutes");
 const userRoute = require("./routes/userRoutes");
 const projectRoute = require("./routes/projectRoutes");
@@ -61,6 +62,7 @@ app.use(cors({ origin: true }));
 app.use(`${base_url}/api/v1/users`, restrictToLoggedInUser, userRoute);
 app.use(`${base_url}/api/v1/projects`, restrictToLoggedInUser, projectRoute);
 app.use(`${base_url}/api/v1/auth`, authRoute);
+app.use(`${base_url}/api/v1/mail`, mailRoute);
 
 // TODO: Improve the code to catch unhandled paths in netlify functions.
 if (process.env.NODE_ENV === "development") {

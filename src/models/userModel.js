@@ -1,19 +1,28 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = mongoose.Schema(
   {
     firstName: {
       type: String,
       required: [true, "Please tell us your firstName!"],
+      trim: true,
+      maxlength: [15, "A first name must have max 15 characters"],
+      minlength: [1, "A first name must have min 1 characters"],
+      validate: [validator.isAlpha, "First name must only contain characters"],
     },
     lastName: {
       type: String,
+      maxlength: [15, "A last name must have max 15 characters"],
+      minlength: [1, "A last name must have min 1 characters"],
+      validate: [validator.isAlpha, "Last name must only contain characters"],
     },
     email: {
       type: String,
       required: [true, "Please tell us your email!"],
       unique: true,
       immutable: true,
+      validate: [validator.isEmail, "Please provide a valid email"],
     },
     dob: {
       type: Date,

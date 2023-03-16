@@ -31,14 +31,5 @@ const projectSchema = mongoose.Schema(
   }
 );
 
-// projectSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: "users",
-//   }).populate({
-//     path: "admins",
-//   });
-//   next();
-// });
-
 const Project = mongoose.model("Project1", projectSchema);
 module.exports = Project;
