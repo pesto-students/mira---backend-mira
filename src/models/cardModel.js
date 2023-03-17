@@ -14,7 +14,31 @@ const projectSchema = mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Project1",
     },
-    createdBy: {
+    status: {
+      type: String,
+      enum: ["backlog", "ready2deploy", "in progress", "done"],
+    },
+    prioroity: {
+      type: String,
+      enum: ["high", "medium", "low"],
+    },
+    estimatedDate: {
+      type: Date,
+      validate: {
+        validator: function (v) {
+          return (
+            v && // check that there is a date object
+            v.getTime() > Date.now()
+          );
+        },
+        message: "Estimated date should be higher than current date.",
+      },
+    },
+    reporter: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User6",
+    },
+    assignee: {
       type: mongoose.Schema.ObjectId,
       ref: "User6",
     },
@@ -27,12 +51,13 @@ const projectSchema = mongoose.Schema(
 
 projectSchema.pre(/^find/, function (next) {
   this.populate({
-    path: "createdBy",
+    path: "reporter",
     select: "firstName email imageUrl",
   }).populate({
     path: "project",
     select: "name logo",
   });
+  this.select("-__v -createdAt -updatedAt");
   next();
 });
 

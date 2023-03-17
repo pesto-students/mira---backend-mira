@@ -5,7 +5,7 @@ const AppError = require("../utils/appError");
 
 exports.setProjectUserIds = (req, res, next) => {
   req.body.project = req.params.projectId;
-  req.body.createdBy = req.user.id;
+  req.body.reporter = req.user.id;
   next();
 };
 
