@@ -4,8 +4,8 @@ const cardRoutes = require("./cardRoutes");
 
 router.use(
   "/:projectId/cards",
-  projectController.getProjectUserRole,
-  projectController.restrictTo("projectUser"),
+  projectController.getProjectAndUserRole,
+  projectController.restrictTo("projectUserAccess"),
   cardRoutes
 );
 
@@ -20,18 +20,18 @@ router
 router
   .route("/:id")
   .get(
-    projectController.getProjectUserRole,
-    projectController.restrictTo("projectUser"),
+    projectController.getProjectAndUserRole,
+    projectController.restrictTo("projectUserAccess"),
     projectController.getProject
   )
   .patch(
-    projectController.getProjectUserRole,
-    projectController.restrictTo("projectAdmin"),
+    projectController.getProjectAndUserRole,
+    projectController.restrictTo("projectAdminAccess"),
     projectController.updateProject
   )
   .delete(
-    projectController.getProjectUserRole,
-    projectController.restrictTo("projectAdmin"),
+    projectController.getProjectAndUserRole,
+    projectController.restrictTo("projectAdminAccess"),
     projectController.deleteProject
   );
 
