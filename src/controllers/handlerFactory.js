@@ -69,7 +69,8 @@ exports.getOne = (Model, ...popOptions) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Model.find(req.filter).clone(), req.query)
+    const filters = req.filters || {};
+    const features = new APIFeatures(Model.find(filters), req.query)
       .filter()
       .sort()
       .limitFields()
