@@ -37,7 +37,7 @@ exports.getProjectAndUserRole = catchAsync(async (req, res, next) => {
 });
 
 exports.filterProjectByUser = (req, res, next) => {
-  req.filter = { users: req.user.id };
+  req.filters = { users: req.user.id };
   next();
 };
 
