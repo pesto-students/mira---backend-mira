@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const limiter = rateLimit({
-  max: 100, // Limit to 100 request per IP per hour.
+  max: 10000, // Limit to 100 request per IP per hour.
   windowMs: 60 * 60 * 1000,
   message: "Too many requests from this IP, please try again in 1hr.",
 });
