@@ -15,6 +15,13 @@ exports.restrictTo = (...roles) => {
   };
 };
 
+exports.limitResponse = (limit) => {
+  return (req, res, next) => {
+    req.query.limit = limit;
+    next();
+  };
+};
+
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {

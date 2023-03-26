@@ -10,7 +10,9 @@ router
   .get(userController.restrictTo("platformAdmin"), userController.getAllUsers)
   .post(userController.restrictTo("platformAdmin"), userController.createUser);
 
-router.route("/search").get(userController.getAllUsers);
+router
+  .route("/search")
+  .get(userController.limitResponse(10), userController.getAllUsers);
 
 router
   .route("/:id")

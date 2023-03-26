@@ -37,7 +37,9 @@ exports.getProjectAndUserRole = catchAsync(async (req, res, next) => {
 });
 
 exports.filterProjectByUser = (req, res, next) => {
-  req.filters = { users: req.user.id };
+  // req.filters = { users: req.user.id, admins: req.user.id };
+  const userId = req.user.id;
+  req.filters = { $or: [{ users: userId }, { admins: userId }] };
   next();
 };
 
@@ -55,7 +57,11 @@ exports.restrictTo = (role) => {
 };
 
 exports.getAllProjects = factory.getAll(Project);
-exports.getProject = factory.getOne(Project, { path: "users" });
+exports.getProject = factory.getOne(
+  Project,
+  { path: "users" },
+  { path: "admins" }
+);
 exports.createProject = factory.createOne(Project);
 exports.updateProject = (req, res, next) => {
   const { project, body } = req;
