@@ -44,7 +44,7 @@ app.use(helmet());
 app.use(`${base_url}/api`, limiter);
 
 // Body parser, reading data from body into req.body.
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "50kb" }));
 
 // Data sanitization against NoSQL query injection.
 app.use(mongoSanitize());
