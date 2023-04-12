@@ -10,7 +10,7 @@ exports.setProjectUserIds = (req, res, next) => {
 };
 
 exports.filterCardsByProject = (req, res, next) => {
-  if (req.params.projectId) req.filter = { project: req.params.projectId };
+  if (req.params.projectId) req.filters = { project: req.params.projectId };
   next();
 };
 
