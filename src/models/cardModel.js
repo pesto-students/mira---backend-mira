@@ -53,10 +53,6 @@ projectSchema.pre(/^find/, function (next) {
   this.populate({
     path: "reporter",
     select: "firstName email imageUrl",
-  }).populate({
-    path: "project",
-    select: "name logo admins users",
-    populate: [{ path: "admins" }],
   });
   this.select("-__v -createdAt -updatedAt");
   next();
