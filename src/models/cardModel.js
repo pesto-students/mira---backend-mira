@@ -18,7 +18,7 @@ const projectSchema = mongoose.Schema(
       type: String,
       enum: ["backlog", "ready2deploy", "in progress", "done"],
     },
-    prioroity: {
+    priority: {
       type: String,
       enum: ["high", "medium", "low"],
     },
@@ -53,9 +53,6 @@ projectSchema.pre(/^find/, function (next) {
   this.populate({
     path: "reporter",
     select: "firstName email imageUrl",
-  }).populate({
-    path: "project",
-    select: "name logo",
   });
   this.select("-__v -createdAt -updatedAt");
   next();
