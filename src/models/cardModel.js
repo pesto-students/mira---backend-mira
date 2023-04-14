@@ -50,10 +50,6 @@ const projectSchema = mongoose.Schema(
 );
 
 projectSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "reporter",
-    select: "firstName email imageUrl",
-  });
   this.select("-__v -createdAt -updatedAt");
   next();
 });
