@@ -13,7 +13,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: body.password,
     firebaseId: "tempString",
     authTime: 0,
-    imageUrl: "tempUrl",
+    imageUrl: body?.imageUrl || "",
     emailVerified: false,
   };
   // Validate fields with the user model

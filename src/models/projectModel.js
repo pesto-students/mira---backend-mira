@@ -5,7 +5,6 @@ const projectSchema = mongoose.Schema(
     name: {
       type: String,
       required: [true, "Please add the project name!"],
-      unique: true,
     },
     description: {
       type: String,
