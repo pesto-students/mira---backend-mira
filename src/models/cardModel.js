@@ -24,15 +24,6 @@ const projectSchema = mongoose.Schema(
     },
     estimatedDate: {
       type: Date,
-      validate: {
-        validator: function (v) {
-          return (
-            v && // check that there is a date object
-            v.getTime() > Date.now()
-          );
-        },
-        message: "Estimated date should be higher than current date.",
-      },
     },
     reporter: {
       type: mongoose.Schema.ObjectId,
